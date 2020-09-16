@@ -17,8 +17,11 @@ def copy_to_container(templateID, containerID, msgText=None, selector=None, hand
 
 def post_messages(chats, chatContainer="chatSection", chatSelector='.chat-bubble'):
     'post one or more messages to the chat'
+    lastID = None
     for t, m in chats: # inject chat messages
-        copy_to_container(t, chatContainer, m, chatSelector)
+        message, container = copy_to_container(t, chatContainer, m, chatSelector)
+        lastID = message.id
+    return lastID
 
 
 def set_visibility(targetID, visible=True, style="display: block;"):
@@ -48,7 +51,7 @@ class ChatQuery(object):
     'prompt user with chat messages, then await get() to receive button click'
     def __init__(self, chats, responseTemplate="chat-options-template", responseContainer="chat-input-container",
             dataAttr='data-option-value', selector='button[data-option-value]'):
-        post_messages(chats)
+        self.lastID = post_messages(chats)
         self.temporary = copy_to_container(responseTemplate, responseContainer, selector=selector, handler=self.handler)[0]
         self.outcome = self.message = None
         self.dataAttr = dataAttr
@@ -63,7 +66,7 @@ class ChatQuery(object):
                 return self.outcome
     def close(self):
         if self.message:
-            post_messages((("StudentMessageTemplate", self.message),))
+            self.lastID = post_messages((("StudentMessageTemplate", self.message),))
         if self.temporary:
             self.temporary.remove() # delete this element from the DOM
 
