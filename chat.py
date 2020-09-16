@@ -21,10 +21,11 @@ def post_messages(chats, chatContainer="chatSection", chatSelector='.chat-bubble
         copy_to_container(t, chatContainer, m, chatSelector)
 
 
-def set_visibility(targetID, visible=True):
+def set_visibility(targetID, visible=True, style="display: block;"):
+    'show or hide a specific DOM container'
     target = document[targetID]
     if visible:
-        target.style = "display: block;"
+        target.style = style
     else:
         target.style = "display: none;"
 
