@@ -3,7 +3,7 @@ import chat
 
 async def main(insertBeforeID=None):
     'let student select FAQs to view or create a new FAQ'
-    await offer_updates(None, insertBeforeID)
+    await offer_updates(update_test, 'TestAfterPoint')
     faqs = await chat.query("faq-list-template", insertBeforeID=insertBeforeID,
                             klass=chat.FaqMultiSelection)
     for inquiry in faqs:
@@ -42,13 +42,18 @@ async def create_new_faq(insertBeforeID=None):
 
 async def offer_updates(updateFunc, insertBeforeID, **kwargs):
     wantUpdates = await chat.query((("ChatMessageTemplate", 'Updates are available for "This Question".  Do you want to view the updates now?'),),
-                        'yesno-template', insertBeforeID=insertBeforeID)
+                        'yesno-template')
     if wantUpdates != 'yes':
         return
     toggler = chat.HistoryToggle(insertBeforeID)
-    like = await chat.query((("ChatMessageTemplate", 'Here is a nice update.  Do you like it?'),),
-                        'yesno-template', insertBeforeID=insertBeforeID)
+    await updateFunc(insertBeforeID, **kwargs)
     toggler.close()
 
-aio.run(main('TestAfterPoint'))
+
+async def update_test(insertBeforeID):
+    like = await chat.query((("ChatMessageTemplate", 'Here is a nice update.  Do you like it?'),),
+                        'yesno-template', insertBeforeID=insertBeforeID)
+
+
+aio.run(main())
 
