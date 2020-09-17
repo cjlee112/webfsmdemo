@@ -33,13 +33,13 @@ def post_messages(chats, chatContainer="chatSection", chatSelector='.chat-bubble
     return lastID
 
 
-def set_visibility(targetID, visible=True, style="display: block;"):
+def set_visibility(targetID, visible=True, displayStyle='block'):
     'show or hide a specific DOM container'
     target = document[targetID]
     if visible:
-        target.style = style
+        target.style.display = displayStyle
     else:
-        target.style = "display: none;"
+        target.style.display = 'none'
 
 def bind_event(func, d=document, selector='button[data-option-value]', event='click'):
     for button in d.select(selector):
