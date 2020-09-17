@@ -1,26 +1,35 @@
 from browser import document, aio
 
-def copy_to_container(templateID, containerID, msgText=None, selector=None, handler=None, **kwargs):
+def copy_to_container(templateID, containerID, msgText=None, selector=None, handler=None, 
+                      insertAfterID=None, **kwargs):
     'clone a template, inject content, and append to container'
     template = document[templateID]
     message = template.cloneNode(True) # clone its full subtree including all descendants
-    message.id = webfsm_id.next()
+    message.id = webfsm_id.__next__()
     if msgText:
         contentElement = message.select(selector)[0]
         contentElement.html = msgText
     if handler:
         bind_event(handler, message, selector, **kwargs)
     container = document[containerID]
-    container <= message # append to container's children
+    if insertAfterID: # insert at this specific location
+        insertAfter = document[insertAfterID]
+        container.insertBefore(message, insertAfter.nextSibling)
+    else:
+        container <= message # append to container's children
     document.scrollingElement.scrollTop = document.scrollingElement.scrollHeight # scroll to bottom
     return message, container
 
-def post_messages(chats, chatContainer="chatSection", chatSelector='.chat-bubble'):
+def post_messages(chats, chatContainer="chatSection", chatSelector='.chat-bubble',
+                    insertAfterID=None):
     'post one or more messages to the chat'
     lastID = None
     for t, m in chats: # inject chat messages
-        message, container = copy_to_container(t, chatContainer, m, chatSelector)
+        message, container = copy_to_container(t, chatContainer, m, chatSelector,
+                                                insertAfterID=insertAfterID)
         lastID = message.id
+        if insertAfterID: # update insertion point
+            insertAfterID = lastID
     return lastID
 
 
@@ -38,9 +47,9 @@ def bind_event(func, d=document, selector='button[data-option-value]', event='cl
 
 def generate_id(stemFormat='webfsm%d'):
     'generate unique IDs for webfsm DOM elements'
-    i = 0
+    i = 1
     while True:
-        yield stemFormat % i
+        yield stemFormat % (i,)
         i += 1
 
 webfsm_id = generate_id() # get iterator
@@ -50,9 +59,14 @@ webfsm_id = generate_id() # get iterator
 class ChatQuery(object):
     'prompt user with chat messages, then await get() to receive button click'
     def __init__(self, chats, responseTemplate="chat-options-template", responseContainer="chat-input-container",
-            dataAttr='data-option-value', selector='button[data-option-value]'):
-        self.lastID = post_messages(chats)
-        self.temporary = copy_to_container(responseTemplate, responseContainer, selector=selector, handler=self.handler)[0]
+            dataAttr='data-option-value', selector='button[data-option-value]',
+            insertAfterID=None):
+        self.lastID = post_messages(chats, insertAfterID=insertAfterID)
+        if insertAfterID: # update insertion point
+            insertAfterID = self.lastID
+        self.insertAfterID = insertAfterID
+        self.temporary = copy_to_container(responseTemplate, responseContainer, selector=selector,
+                                            handler=self.handler)[0]
         self.outcome = self.message = None
         self.dataAttr = dataAttr
     def handler(self, ev):
@@ -66,7 +80,10 @@ class ChatQuery(object):
                 return self.outcome
     def close(self):
         if self.message:
-            self.lastID = post_messages((("StudentMessageTemplate", self.message),))
+            self.lastID = post_messages((("StudentMessageTemplate", self.message),),
+                                        insertAfterID=self.insertAfterID)
+            if self.insertAfterID: # update insertion point
+                self.insertAfterID = self.lastID
         if self.temporary:
             self.temporary.remove() # delete this element from the DOM
 
