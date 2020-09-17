@@ -94,10 +94,9 @@ class ChatInput(ChatQuery):
     def handler(self, ev):
         self.outcome = self.message = self.temporary.select("textarea")[0].value
 
-class FaqMultiSelection(ChatQuery):
+class MultiSelection(ChatQuery):
     'prompt user with chat messages, then await get() to receive multiple-selection'
-    def __init__(self, faq="faq-list-template", **kwargs):
-        chats = (("ChatMessageTemplate", "Would any of the following questions help you? Select the one(s) you wish to view."), (faq, None))
+    def __init__(self, chats, **kwargs):
         ChatQuery.__init__(self, chats, "continue-template", selector="button", **kwargs)
     def handler(self, ev):
         self.outcome = {"faq-q1" : "faq-a1"}
