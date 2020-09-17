@@ -1,7 +1,7 @@
 from browser import document, aio
 
 def copy_to_container(templateID, containerID, msgText=None, selector=None, handler=None, 
-                      insertAfterID=None, **kwargs):
+                      insertBeforeID=None, **kwargs):
     'clone a template, inject content, and append to container'
     template = document[templateID]
     message = template.cloneNode(True) # clone its full subtree including all descendants
@@ -12,25 +12,18 @@ def copy_to_container(templateID, containerID, msgText=None, selector=None, hand
     if handler:
         bind_event(handler, message, selector, **kwargs)
     container = document[containerID]
-    if insertAfterID: # insert at this specific location
-        insertAfter = document[insertAfterID]
-        container.insertBefore(message, insertAfter.nextSibling)
+    if insertBeforeID: # insert at this specific location
+        container.insertBefore(message, document[insertBeforeID])
     else:
         container <= message # append to container's children
     document.scrollingElement.scrollTop = document.scrollingElement.scrollHeight # scroll to bottom
     return message, container
 
 def post_messages(chats, chatContainer="chatSection", chatSelector='.chat-bubble',
-                    insertAfterID=None):
+                    insertBeforeID=None):
     'post one or more messages to the chat'
-    lastID = None
     for t, m in chats: # inject chat messages
-        message, container = copy_to_container(t, chatContainer, m, chatSelector,
-                                                insertAfterID=insertAfterID)
-        lastID = message.id
-        if insertAfterID: # update insertion point
-            insertAfterID = lastID
-    return lastID
+        copy_to_container(t, chatContainer, m, chatSelector, insertBeforeID=insertBeforeID)
 
 
 def set_visibility(targetID, visible=True, displayStyle='block'):
@@ -60,11 +53,9 @@ class ChatQuery(object):
     'prompt user with chat messages, then await get() to receive button click'
     def __init__(self, chats, responseTemplate="chat-options-template", responseContainer="chat-input-container",
             dataAttr='data-option-value', selector='button[data-option-value]',
-            insertAfterID=None):
-        self.lastID = post_messages(chats, insertAfterID=insertAfterID)
-        if insertAfterID: # update insertion point
-            insertAfterID = self.lastID
-        self.insertAfterID = insertAfterID
+            insertBeforeID=None):
+        self.insertBeforeID = insertBeforeID
+        post_messages(chats, insertBeforeID=insertBeforeID)
         self.temporary = copy_to_container(responseTemplate, responseContainer, selector=selector,
                                             handler=self.handler)[0]
         self.outcome = self.message = None
@@ -80,10 +71,8 @@ class ChatQuery(object):
                 return self.outcome
     def close(self):
         if self.message:
-            self.lastID = post_messages((("StudentMessageTemplate", self.message),),
-                                        insertAfterID=self.insertAfterID)
-            if self.insertAfterID: # update insertion point
-                self.insertAfterID = self.lastID
+            post_messages((("StudentMessageTemplate", self.message),),
+                          insertBeforeID=self.insertBeforeID)
         if self.temporary:
             self.temporary.remove() # delete this element from the DOM
 
