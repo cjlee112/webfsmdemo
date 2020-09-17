@@ -77,6 +77,16 @@ class ChatQuery(object):
             self.temporary.remove() # delete this element from the DOM
 
 
+async def query(chats, *args, **kwargs):
+    'perform query and return student response'
+    try:
+        klass = kwargs['klass']
+        del kwargs['klass']
+    except KeyError:
+        klass = ChatQuery
+    prompt = klass(chats, *args, **kwargs)
+    return await prompt.get()
+
 class ChatInput(ChatQuery):
     'prompt user with chat messages, then await get() to receive textarea'
     def __init__(self, chats, **kwargs):
@@ -92,21 +102,6 @@ class FaqMultiSelection(ChatQuery):
     def handler(self, ev):
         self.outcome = {"faq-q1" : "faq-a1"}
 
-class FullFaqPrompt(ChatQuery):
-    'prompt user with full-length question, then await get() to receive yes vs. no button click'
-    def __init__(self, inquiry, **kwargs):
-        chats = ((inquiry, None), ("ChatMessageTemplate", "Would the answer to this question help you?"))
-        ChatQuery.__init__(self, chats, "yesno-template", **kwargs)
-
-class FaqStatusPrompt(ChatQuery):
-    def __init__(self, answer, **kwargs):
-        chats = ((answer, None), ("ChatMessageTemplate", "How well do you feel you understand now? If you need more clarification, tell us."))
-        ChatQuery.__init__(self, chats, "status-options-template", **kwargs)
-
-class AnyQuestionsPrompt(ChatQuery):
-    def __init__(self, **kwargs):
-        chats = (("ChatMessageTemplate", "Is there anything else you're wondering about, where you'd like clarification or something you're unsure about this point?"),)
-        ChatQuery.__init__(self, chats, "yesno-template", **kwargs)
 
 
 ################################################################

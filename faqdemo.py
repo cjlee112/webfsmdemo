@@ -3,12 +3,12 @@ import chat
 
 async def main(insertBeforeID=None):
     'let student select FAQs to view or create a new FAQ'
-    fms = chat.FaqMultiSelection("faq-list-template", insertBeforeID=insertBeforeID)
-    faqs = await fms.get()
+    faqs = await chat.query("faq-list-template", insertBeforeID=insertBeforeID,
+                            klass=chat.FaqMultiSelection)
     for inquiry in faqs:
         await show_faq(inquiry, faqs[inquiry], insertBeforeID)
-    anyFaqPrompt = chat.AnyQuestionsPrompt(insertBeforeID=insertBeforeID)
-    hasQuestion = await anyFaqPrompt.get()
+    hasQuestion = await chat.query((("ChatMessageTemplate", "Is there anything else you're wondering about, where you'd like clarification or something you're unsure about this point?"),),
+                        'yesno-template', insertBeforeID=insertBeforeID)
     if hasQuestion == 'yes':
         await create_new_faq(insertBeforeID)
     chat.post_messages((("ChatMessageTemplate", "OK, let's continue."),),
@@ -17,26 +17,23 @@ async def main(insertBeforeID=None):
 
 async def show_faq(inquiry, answer, insertBeforeID=None):
     'show full question and option to view answer'
-    prompt = chat.FullFaqPrompt(inquiry, insertBeforeID=insertBeforeID)
-    helpful = await prompt.get()
+    helpful = await chat.query(((inquiry, None), ("ChatMessageTemplate", "Would the answer to this question help you?")), 'yesno-template', insertBeforeID=insertBeforeID)
     if helpful == 'yes' and answer:
         await show_faq_answer(answer, insertBeforeID)
 
 
 async def show_faq_answer(answer, insertBeforeID=None):
     'show answer and ask status'
-    prompt = chat.FaqStatusPrompt(answer, insertBeforeID=insertBeforeID)
-    status = await prompt.get()
+    status = await chat.query(((answer, None), ("ChatMessageTemplate", "How well do you feel you understand now? If you need more clarification, tell us.")),
+                            "status-options-template", insertBeforeID=insertBeforeID)
     if status == 'help':
         chat.post_messages((("ChatMessageTemplate", "We will try to provide more explanation for this."),), insertBeforeID=insertBeforeID)
 
 
 async def create_new_faq(insertBeforeID=None):
     'student writes a new FAQ question'
-    prompt = chat.ChatInput((("ChatMessageTemplate", "First, write a 'headline version' of your question as a single sentence, as clearly and simply as you can. (You'll have a chance to explain your question fully in the next step)."),), insertBeforeID=insertBeforeID)
-    title = await prompt.get()
-    prompt = chat.ChatInput((("ChatMessageTemplate", "Next, let's nail down exactly what you're unsure about, by applying your question to a real-world situation, to identify what specific outcome you're unsure about (e.g. 'is A going to happen, or B?')"),), insertBeforeID=insertBeforeID)
-    text = await prompt.get()
+    title = await chat.query((("ChatMessageTemplate", "First, write a 'headline version' of your question as a single sentence, as clearly and simply as you can. (You'll have a chance to explain your question fully in the next step)."),), insertBeforeID=insertBeforeID, klass=chat.ChatInput)
+    text = await chat.query((("ChatMessageTemplate", "Next, let's nail down exactly what you're unsure about, by applying your question to a real-world situation, to identify what specific outcome you're unsure about (e.g. 'is A going to happen, or B?')"),), insertBeforeID=insertBeforeID, klass=chat.ChatInput)
     chat.post_messages((("ChatMessageTemplate", "We'll try to get you an answer to this."),),
                        insertBeforeID=insertBeforeID)
 
