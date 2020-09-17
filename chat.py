@@ -103,6 +103,36 @@ class FaqMultiSelection(ChatQuery):
         self.outcome = {"faq-q1" : "faq-a1"}
 
 
+class HistoryToggle(object):
+    def __init__(self, insertBeforeID, updateFlagger='UpdateFlagger', updateToggler='UpdateToggler'):
+        self.target = document[insertBeforeID]
+        self.controller = document[updateFlagger]
+        self.msgToggler = document[updateToggler]
+        set_visibility(updateFlagger)
+        self.set_toggle()
+        bind_event(self.handler, selector='#' + updateToggler)
+    def handler(self, ev):
+        self.set_toggle(not self.visible)
+    def set_toggle(self, visible=False):
+        if visible:
+            self.msgToggler.text = '↑ Hide Subsequent Threads'
+            self.target.scrollIntoView({'block': "center"})
+            #document.scrollingElement.scrollTop = document.scrollingElement.scrollHeight # scroll to bottom
+        else:
+            self.msgToggler.text = '↓ Show Subsequent Threads'
+        self.visible = visible
+        container = self.target.parent
+        toggle = False
+        for c in container.children:
+            if c.id == self.target.id:
+                toggle = True
+            if toggle:
+                set_visibility(c.id, visible)
+    def close(self):
+        set_visibility(self.controller.id, False)
+        self.set_toggle(True)
+
+
 
 ################################################################
 # distinct states:

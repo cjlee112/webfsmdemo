@@ -192,7 +192,39 @@ Courselets
     </section>
 
     <!-- Chat messages container -->
-    <section class="chat-messages" id="chatSection" style="display: block; opacity: 1;"></section>
+    <section class="chat-messages" id="chatSection" style="display: block; opacity: 1;">
+
+<div class="chat-message chat-message-text " id="TestInsertionPoint" style="opacity: 1;">
+  <div class="chat-container">
+    <div class="inner">
+      <div class="chat-avatar  chat-avatar--instructor-initials ">TT</div>
+      <div class="chat-bubble">
+        Messages should be AFTER this.
+
+        <span class="chat-new-msg">
+            new
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chat-message chat-message-text " id="TestAfterPoint" style="opacity: 1;">
+  <div class="chat-container">
+    <div class="inner">
+      <div class="chat-avatar  chat-avatar--instructor-initials ">TT</div>
+      <div class="chat-bubble">
+        This should be AFTER messages.
+
+        <span class="chat-new-msg">
+            new
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
   </main>
 
   <!-- Chat sidebar -->
@@ -263,10 +295,10 @@ Courselets
 
   <!-- Chat input bar -->
   <section class="chat-input-bar" style="display: block; bottom: 0px;">
-    <div class="thread-nav-bar" style="display: none;">
+    <div class="thread-nav-bar" id="UpdateFlagger" style="display: none;">
       <div class="thread-nav-bar__container">
         <span>You’re working on updates in “How to Measure Conceptual Understanding?”</span>
-        <div class="thread-toggler-btn">↓ Show Subsequent Threads</div>
+        <div id="UpdateToggler" class="thread-toggler-btn">↓ Show Subsequent Threads</div>
       </div>
     </div>
     <div class="inner">
