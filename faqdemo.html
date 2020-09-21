@@ -9,11 +9,11 @@
 Courselets
 </title>
 
-    <link rel="icon" href="Courselets_files/favicon.png">
+    <link rel="icon" href="/static/img/student/favicon.png">
     <link type="text/css" rel="stylesheet" href="Courselets_files/295027bc-49f8-4267-859a-8e5aea9f11b6.css">
     <!-- build:css css/app.css -->
-    <link rel="stylesheet" href="Courselets_files/bootstrap.min.css">
-    <link rel="stylesheet" href="Courselets_files/app.css">
+    <link rel="stylesheet" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/student/app.css">
     <!-- endbuild -->
 
     <!-- HTML5 shim, Respond.js and jQuery for IE8 support of HTML5 elements and media queries -->
@@ -326,12 +326,12 @@ Courselets
 
 
     <!-- build:js js/app.js -->
-    <script src="Courselets_files/jquery.min.js"></script>
-    <script src="Courselets_files/bootstrap.min.js"></script>
-    <script src="Courselets_files/handlebars.runtime.min.js"></script>
-    <script src="Courselets_files/ScrollToPlugin.min.js"></script>
-    <script src="Courselets_files/TweenMax.min.js"></script>
-    <script src="Courselets_files/compiled.templates.js"></script>
+    <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/bower_components/handlebars/handlebars.runtime.min.js"></script>
+    <script src="/static/bower_components/gsap/src/minified/plugins/ScrollToPlugin.min.js"></script>
+    <script src="/static/bower_components/gsap/src/minified/TweenMax.min.js"></script>
+    <script src="/static/js/chat/views/compiled.templates.js"></script>
     <!-- endbuild -->
 
     
@@ -351,17 +351,17 @@ Courselets
     CUI.config.resourcesUrl = '/chat/resources/';
     CUI.config.updatesUrl = '/chat/updates/';
     CUI.config.updated_thread_id = -1
-    CUI.config.defaultStudentAvatar = 'https://www.courselets.org/static/img/student/avatar-student.jpg';
-    CUI.config.defaultTeacherAvatar = 'https://www.courselets.org/static/img/student/avatar-teacher.jpg';
+    CUI.config.defaultStudentAvatar = '/static/img/student/avatar-student.jpg';
+    CUI.config.defaultTeacherAvatar = '/static/img/student/avatar-teacher.jpg';
   </script>
 
-  <script type="text/javascript" src="Courselets_files/jquery-ui.js"></script>
-  <script type="text/javascript" src="Courselets_files/rangy-core.js"></script>
-  <script type="text/javascript" src="Courselets_files/textinputs_jquery.js"></script>
-  <script type="text/javascript" src="Courselets_files/writemaths.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script type="text/javascript" src="/static/writemaths/demo/rangy-core.js"></script>
+  <script type="text/javascript" src="/static/writemaths/demo/textinputs_jquery.js"></script>
+  <script type="text/javascript" src="/static/writemaths/writemaths.js"></script>
 
   <!-- Mathjax -->
-  <script src="Courselets_files/MathJax.js">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
     MathJax.Hub.Config({
       config: ["MMLorHTML.js"],
       jax: ["input/TeX","input/MathML","input/AsciiMath","output/HTML-CSS","output/NativeMML", "output/PreviewHTML"],
@@ -383,35 +383,35 @@ Courselets
   </style>
 
   <!-- Chat js -->
-  <script src="Courselets_files/screenfull.js"></script>
-  <script src="Courselets_files/zoom.min.js"></script>
-  <script src="Courselets_files/jquery.more-less.js"></script>
-  <script src="Courselets_files/jquery.expanding-textarea.js"></script>
-  <script src="Courselets_files/jquery.notify.js"></script>
-  <script src="Courselets_files/cui.js"></script>
-  <script src="Courselets_files/cui.utils.js"></script>
-  <script src="Courselets_files/cui.chat-back-to-breakpoint-button-model.js"></script>
-  <script src="Courselets_files/cui.chat-to-next-breakpoint-button-model.js"></script>
-  <script src="Courselets_files/cui.chat-breakpoint-model.js"></script>
-  <script src="Courselets_files/cui.chat-media-model.js"></script>
-  <script src="Courselets_files/cui.chat-message-model.js"></script>
-  <script src="Courselets_files/cui.sidebar-breakpoint-model.js"></script>
-  <script src="Courselets_files/cui.input-option-model.js"></script>
-  <script src="Courselets_files/cui.sidebar-resource-model.js"></script>
-  <script src="Courselets_files/cui.chat-back-to-breakpoint-button-presenter.js"></script>
-  <script src="Courselets_files/cui.chat-to-next-breakpoint-button-presenter.js"></script>
-  <script src="Courselets_files/cui.thread-nav-bar-presenter.js"></script>
-  <script src="Courselets_files/cui.chat-messages-container-presetner.js"></script>
-  <script src="Courselets_files/cui.chat-input-container-presenter.js"></script>
-  <script src="Courselets_files/cui.chat-message-presenter.js"></script>
-  <script src="Courselets_files/cui.chat-media-presenter.js"></script>
-  <script src="Courselets_files/cui.chat-breakpoint-presenter.js"></script>
-  <script src="Courselets_files/cui.input-option-presenter.js"></script>
-  <script src="Courselets_files/cui.sidebar-breakpoint-presenter.js"></script>
-  <script src="Courselets_files/cui.sidebar-resource-presenter.js"></script>
-  <script src="Courselets_files/cui.chat-presenter.js"></script>
-  <script src="Courselets_files/helpers.js"></script>
-  <script src="Courselets_files/drawing.bundle.js"></script>
+  <script src="/static/bower_components/screenfull/src/screenfull.js"></script>
+  <script src="/static/bower_components/zoom.js/dist/zoom.min.js"></script>
+  <script src="/static/js/plugins/jquery.more-less.js"></script>
+  <script src="/static/js/plugins/jquery.expanding-textarea.js"></script>
+  <script src="/static/js/plugins/jquery.notify.js"></script>
+  <script src="/static/js/cui.js"></script>
+  <script src="/static/js/chat/utils/cui.utils.js"></script>
+  <script src="/static/js/chat/models/cui.chat-back-to-breakpoint-button-model.js"></script>
+  <script src="/static/js/chat/models/cui.chat-to-next-breakpoint-button-model.js"></script>
+  <script src="/static/js/chat/models/cui.chat-breakpoint-model.js"></script>
+  <script src="/static/js/chat/models/cui.chat-media-model.js"></script>
+  <script src="/static/js/chat/models/cui.chat-message-model.js"></script>
+  <script src="/static/js/chat/models/cui.sidebar-breakpoint-model.js"></script>
+  <script src="/static/js/chat/models/cui.input-option-model.js"></script>
+  <script src="/static/js/chat/models/cui.sidebar-resource-model.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-back-to-breakpoint-button-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-to-next-breakpoint-button-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.thread-nav-bar-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-messages-container-presetner.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-input-container-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-message-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-media-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-breakpoint-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.input-option-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.sidebar-breakpoint-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.sidebar-resource-presenter.js"></script>
+  <script src="/static/js/chat/presenters/cui.chat-presenter.js"></script>
+  <script src="/static/js/helpers.js"></script>
+  <script src="/static/js/drawing.bundle.js"></script>
 
   
 
