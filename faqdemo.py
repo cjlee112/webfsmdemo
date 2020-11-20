@@ -8,12 +8,14 @@ async def main(insertBeforeID=None):
     if s != 'same':
         await offer_errmods(insertBeforeID)
         await offer_faqs(insertBeforeID)
-    await chat.query((("ChatMessageTemplate", "Now you can move to the next lesson"),),
-                       'continue-template', insertBeforeID=insertBeforeID)
+    await chat.continue_button((("ChatMessageTemplate", "Now you can move to the next lesson"),),
+                       insertBeforeID=insertBeforeID)
 
 
 async def pose_orct(insertBeforeID=None):
     'ask question, student responds, self-evaluates answer'
+    chat.post_messages((("ChatBreakpointTemplate", "Efficiency Concerns: When to Include an ORCT?"),),
+                       chatSelector='span', insertBeforeID=insertBeforeID)
     await chat.query((("ChatMessageTemplate", "What is the airspeed of a fully laden swallow?"),),
                     insertBeforeID=insertBeforeID, klass=chat.ChatInput)
     await chat.query((("ChatMessageTemplate", None),),
@@ -71,18 +73,18 @@ async def show_faq_answer(answer, insertBeforeID=None):
         chat.post_messages((("ChatMessageTemplate", "We will try to provide more explanation for this."),), insertBeforeID=insertBeforeID)
 
 
-async def create_new_faq(insertBeforeID=None):
+async def create_new_faq(insertBeforeID=None, messageStamp=''):
     'student writes a new FAQ question'
-    title = await chat.query((("ChatMessageTemplate", "First, write a 'headline version' of your question as a single sentence, as clearly and simply as you can. (You'll have a chance to explain your question fully in the next step)."),), insertBeforeID=insertBeforeID, klass=chat.ChatInput)
-    text = await chat.query((("ChatMessageTemplate", "Next, let's nail down exactly what you're unsure about, by applying your question to a real-world situation, to identify what specific outcome you're unsure about (e.g. 'is A going to happen, or B?')"),), insertBeforeID=insertBeforeID, klass=chat.ChatInput)
-    chat.post_messages((("ChatMessageTemplate", "We'll try to get you an answer to this."),),
+    title = await chat.query((("ChatMessageTemplate", f"First, write a 'headline version' of your question as a single sentence, as clearly and simply as you can. (You'll have a chance to explain your question fully in the next step). {messageStamp}"),), insertBeforeID=insertBeforeID, klass=chat.ChatInput)
+    text = await chat.query((("ChatMessageTemplate", f"Next, let's nail down exactly what you're unsure about, by applying your question to a real-world situation, to identify what specific outcome you're unsure about (e.g. 'is A going to happen, or B?') {messageStamp}"),), insertBeforeID=insertBeforeID, klass=chat.ChatInput)
+    chat.post_messages((("ChatMessageTemplate", f"We'll try to get you an answer to this. {messageStamp}"),),
                        insertBeforeID=insertBeforeID)
 
 
 
 async def offer_updates(updateFunc, insertBeforeID, **kwargs):
     'let student view or skip display of updates'
-    wantUpdates = await chat.query((("ChatMessageTemplate", 'Updates are available for "This Question".  Do you want to view the updates now?'),),
+    wantUpdates = await chat.query((("ChatMessageTemplate", '''You have completed this thread. I have posted new messages to help you in the thread "Active Learning Approaches for Conceptual Understanding?". Would you like to view these updates now?<BR><BR><i>If you don't want to view them now, I'll ask you again once you have completed your next thread.</i>'''),),
                         'yesno-template')
     if wantUpdates != 'yes':
         return
@@ -93,8 +95,16 @@ async def offer_updates(updateFunc, insertBeforeID, **kwargs):
 
 async def update_test(insertBeforeID):
     'a trivial test of display a simple'
-    like = await chat.query((("ChatMessageTemplate", 'Here is a nice update.  Do you like it? <span class="chat-new-msg">new</span>'),),
+    await chat.continue_button((("ChatMessageTemplate", 'There are new answers for FAQs you are interested in <span class="chat-new-msg">new</span>'), ("ChatMessageTemplate", '<b>Please, Professor, can you explain exactly what I am confused about?</b><br>I am a student who is very confused, and am hoping that you can make everything clear to me. <span class="chat-new-msg">new</span>'),),
+                       insertBeforeID=insertBeforeID)
+    await chat.continue_button((("ChatMessageTemplate", 'I, the instructor, am now answering your question in great detail: yada yada yada. <span class="chat-new-msg">new</span>'),),
+                       insertBeforeID=insertBeforeID)
+    hasQuestion = await chat.query((("ChatMessageTemplate", 'Have you anything else you are worried about? <span class="chat-new-msg">new</span>'),),
                         'yesno-template', insertBeforeID=insertBeforeID)
+    if hasQuestion == 'yes':
+        await create_new_faq(insertBeforeID, messageStamp='<span class="chat-new-msg">new</span>')
+    await chat.continue_button((("ChatMessageTemplate", 'You have completed this thread. Click on Continue below to view your next thread "Efficiency Concerns: When to Include an ORCT?". <span class="chat-new-msg">new</span>'),),
+                       insertBeforeID=insertBeforeID)
 
 
 aio.run(main())

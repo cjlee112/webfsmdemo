@@ -61,7 +61,10 @@ class ChatQuery(object):
         self.outcome = self.message = None
         self.dataAttr = dataAttr
     def handler(self, ev):
-        self.outcome = ev.target.attrs[self.dataAttr]
+        if self.dataAttr:
+            self.outcome = ev.target.attrs[self.dataAttr]
+        else:
+            self.outcome = 'continue'
         self.message = ev.target.html
     async def get(self):
         while True:
@@ -86,6 +89,9 @@ async def query(chats, *args, **kwargs):
         klass = ChatQuery
     prompt = klass(chats, *args, **kwargs)
     return await prompt.get()
+
+async def continue_button(chats, **kwargs):
+    return await query(chats, 'continue-template', dataAttr=None, selector="button", **kwargs)
 
 class ChatInput(ChatQuery):
     'prompt user with chat messages, then await get() to receive textarea'
