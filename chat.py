@@ -1,7 +1,7 @@
 from browser import document, aio
 
 def copy_to_container(templateID, containerID, msgText=None, selector=None, handler=None, 
-                      insertBeforeID=None, **kwargs):
+                      container=None, insertBeforeID=None, **kwargs):
     'clone a template, inject content, and append to container'
     template = document[templateID]
     message = template.cloneNode(True) # clone its full subtree including all descendants
@@ -11,7 +11,8 @@ def copy_to_container(templateID, containerID, msgText=None, selector=None, hand
         contentElement.html = msgText
     if handler:
         bind_event(handler, message, selector, **kwargs)
-    container = document[containerID]
+    if not container:
+        container = document[containerID]
     if insertBeforeID: # insert at this specific location
         container.insertBefore(message, document[insertBeforeID])
     else:
@@ -46,6 +47,9 @@ def generate_id(stemFormat='webfsm%d'):
         i += 1
 
 webfsm_id = generate_id() # get iterator
+
+def filter_by_kind(messages, kind):
+    return [d for d in messages if d['kind'] == kind]
 
 ############################################################
 
