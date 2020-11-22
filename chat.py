@@ -84,18 +84,8 @@ class ChatQuery(object):
             self.temporary.remove() # delete this element from the DOM
 
 
-async def query(chats, *args, **kwargs):
-    'perform query and return student response'
-    try:
-        klass = kwargs['klass']
-        del kwargs['klass']
-    except KeyError:
-        klass = ChatQuery
-    prompt = klass(chats, *args, **kwargs)
-    return await prompt.get()
-
 async def continue_button(chats, **kwargs):
-    return await query(chats, 'continue-template', dataAttr=None, selector="button", **kwargs)
+    return await ChatQuery(chats, 'continue-template', dataAttr=None, selector="button", **kwargs).get()
 
 class ChatInput(ChatQuery):
     'prompt user with chat messages, then await get() to receive textarea'
@@ -106,8 +96,14 @@ class ChatInput(ChatQuery):
 
 class MultiSelection(ChatQuery):
     'prompt user with chat messages, then await get() to receive multiple-selection'
-    def __init__(self, chats, **kwargs):
-        ChatQuery.__init__(self, chats, "continue-template", selector="button", **kwargs)
+    def __init__(self, chats, choices, listTemplate, choiceTemplate, listSelector=".chat-select-list", choiceSelector='h3',
+                 choiceAttr='title', chatContainer="chatSection", insertBeforeID=None, **kwargs):
+        post_messages(chats, insertBeforeID=insertBeforeID)
+        msg = copy_to_container(listTemplate, chatContainer, insertBeforeID=insertBeforeID)[0]
+        container = msg.select(listSelector)[0]
+        for c in choices:
+            copy_to_container(choiceTemplate, None, c[choiceAttr], choiceSelector, container=container)
+        ChatQuery.__init__(self, (), "continue-template", selector="button", insertBeforeID=insertBeforeID, **kwargs)
     def handler(self, ev):
         self.outcome = {"faq-q1" : "faq-a1"}
 
