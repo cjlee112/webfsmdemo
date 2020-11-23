@@ -191,6 +191,22 @@ Courselets
 
     </section>
 
+
+<div id="DemoScenarios" style="display: none;">
+  This is a demonstration of the Courselets Chat Rapid Prototype.  Please choose from the following demo options, then click START to begin the demonstration.
+  <br>
+  <div>
+    <input type="checkbox" id="NoEMscenaro" name="demoscenarios" value="NoEMscenario">
+    <label for="noEMscenario">Scenario: thread has no Error Models to display.</label>
+  </div>
+  <div>
+    <input type="checkbox" id="NoFAQscenaro" name="demoscenarios" value="NoFAQscenario">
+    <label for="noFAQscenario">Scenario: thread has no FAQs to display.</label>
+  </div>
+  <button id='StartDemoButton'>Start Demo</button>
+</div>
+
+
     <!-- Chat messages container -->
     <section class="chat-messages" id="chatSection" style="display: block; opacity: 1;">
 
@@ -299,7 +315,7 @@ Courselets
   </aside>
 
   <!-- Chat input bar -->
-  <section class="chat-input-bar" style="display: block; bottom: 0px;">
+  <section class="chat-input-bar" id="ChatInputSection" style="display: block; bottom: 0px;">
     <div class="thread-nav-bar" id="UpdateFlagger" style="display: none;">
       <div class="thread-nav-bar__container">
         <span>You’re working on updates in “How to Measure Conceptual Understanding?”</span>

@@ -101,7 +101,6 @@ class MultiSelection(ChatQuery):
         post_messages(chats, insertBeforeID=insertBeforeID)
         msg = copy_to_container(listTemplate, chatContainer, insertBeforeID=insertBeforeID)[0]
         container = msg.select(listSelector)[0]
-        l = []
         for c in choices:
             e = copy_to_container(choiceTemplate, None, c[choiceAttr], choiceSelector, container=container)[0]
             bind_event(self.toggle_choice, e, 'div')
@@ -150,6 +149,27 @@ class HistoryToggle(object):
         set_visibility(self.controller.id, False)
         self.set_toggle(True)
 
+
+class DemoScenario(object):
+    def __init__(self, formID='DemoScenarios', showIDs=('chatSection', 'ChatInputSection'),
+                 buttonSelector='button', checkboxSelector='input'):
+        self.formID = formID
+        self.showIDs = showIDs
+        self.checkboxSelector = checkboxSelector
+        self.scenarios = {}
+        self.show(True)
+        bind_event(self.start, document[formID], buttonSelector)
+    def start(self, ev):
+        for e in document[self.formID].select(self.checkboxSelector):
+            self.scenarios[e.id] = e.checked
+        self.show(False)
+        ev.target.unbind('click')
+    def show(self, visible=True):
+        set_visibility(self.formID, visible)
+        for targetID in self.showIDs:
+            set_visibility(targetID, not visible)
+
+        
 
 
 ################################################################

@@ -4,14 +4,26 @@ import json
 
 async def main(threadURL='faqdemo.json', insertBeforeID=None):
     'basic ORCT chat cycle, starting with a simple updates test'
+    scenario = chat.DemoScenario() # activate demo Start button
     req = await aio.get(threadURL)
     threadData = json.loads(req.data)
     await offer_updates(update_test, threadData['updates'], 'TestAfterPoint')
     mainThread = threadData['main']
+    if scenario.scenarios['NoEMscenaro']:
+        errmods = []
+    else:
+        errmods = chat.filter_by_kind(mainThread, 'errormodel')
+    if scenario.scenarios['NoFAQscenaro']:
+        faqs = []
+    else:
+        faqs = chat.filter_by_kind(mainThread, 'faq')
     s = await pose_orct(chat.filter_by_kind(mainThread, 'orct')[0], insertBeforeID)
     if s != 'same':
-        await offer_errmods(chat.filter_by_kind(mainThread, 'errormodel'), insertBeforeID)
-        await offer_faqs(chat.filter_by_kind(mainThread, 'faq'), insertBeforeID)
+        if errmods:
+            await offer_errmods(errmods, insertBeforeID)
+        if faqs:
+            await offer_faqs(faqs, insertBeforeID)
+        await solicit_faq(insertBeforeID)
     await chat.continue_button((("ChatMessageTemplate", "Now you can move to the next lesson"),),
                        insertBeforeID=insertBeforeID)
 
@@ -63,6 +75,8 @@ async def offer_faqs(faqlist, insertBeforeID=None):
     faqs = await chat.MultiSelection(chats, faqlist, "faq-list-template", "faq-choice-template", insertBeforeID=insertBeforeID).get()
     for i in faqs:
         await show_faq(faqlist[i], insertBeforeID)
+
+async def solicit_faq(insertBeforeID=None):
     hasQuestion = await chat.ChatQuery((("ChatMessageTemplate", "Is there anything else you're wondering about, where you'd like clarification or something you're unsure about this point?"),),
                         'yesno-template', insertBeforeID=insertBeforeID).get()
     if hasQuestion == 'yes':
