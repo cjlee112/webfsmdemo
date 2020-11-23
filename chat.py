@@ -73,7 +73,7 @@ class ChatQuery(object):
     async def get(self):
         while True:
             await aio.sleep(1)
-            if self.outcome:
+            if self.outcome is not None:
                 self.close()
                 return self.outcome
     def close(self):
@@ -101,11 +101,24 @@ class MultiSelection(ChatQuery):
         post_messages(chats, insertBeforeID=insertBeforeID)
         msg = copy_to_container(listTemplate, chatContainer, insertBeforeID=insertBeforeID)[0]
         container = msg.select(listSelector)[0]
+        l = []
         for c in choices:
-            copy_to_container(choiceTemplate, None, c[choiceAttr], choiceSelector, container=container)
+            e = copy_to_container(choiceTemplate, None, c[choiceAttr], choiceSelector, container=container)[0]
+            bind_event(self.toggle_choice, e, 'div')
         ChatQuery.__init__(self, (), "continue-template", selector="button", insertBeforeID=insertBeforeID, **kwargs)
+        self.listID = msg.id
     def handler(self, ev):
-        self.outcome = {"faq-q1" : "faq-a1"}
+        l = []
+        for i, div in enumerate(document[self.listID].select('div.chat-check')):
+            if div.attrs['class'].find('chat-selectable-selected') >= 0:
+                l.append(i)
+        self.outcome = l
+    def toggle_choice(self, ev):
+        div = ev.target
+        if div.attrs['class'].find('chat-selectable-selected') >= 0:
+            div.attrs['class'] = "chat-check chat-selectable"
+        else:
+            div.attrs['class'] = "chat-check chat-selectable  chat-selectable-selected"
 
 
 class HistoryToggle(object):

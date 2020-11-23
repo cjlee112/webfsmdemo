@@ -32,8 +32,8 @@ async def offer_errmods(errmods, insertBeforeID=None):
     'let student select Error Models to view'
     chats = (("ChatMessageTemplate", "Here are the most common blindspots people reported when comparing their answer vs. the correct answer. Check the box(es) that seem relevant to your answer (if any)."),)
     ems = await chat.MultiSelection(chats, errmods, "em-list-template", "em-choice-template", insertBeforeID=insertBeforeID).get()
-    for em in ems:
-        await show_em(em, insertBeforeID)
+    for i in ems:
+        await show_em(errmods[i], insertBeforeID)
     chat.post_messages((("ChatMessageTemplate", "OK, let's continue."),),
                        insertBeforeID=insertBeforeID)
 
@@ -48,7 +48,8 @@ async def show_em_nostatus(em, insertBeforeID=None):
 
 async def show_em(em, insertBeforeID=None):
     'show error model and get student status'
-    status = await chat.ChatQuery(((em, None), ("ChatMessageTemplate", "Hope you've overcame the misconception"),
+    status = await chat.ChatQuery((('faq-a1', f'<b>RE: {em["title"]}</b><br>{em["message"]}'),
+                         ("ChatMessageTemplate", "Hope you've overcame the misconception"),
                          ("ChatMessageTemplate", "How well do you feel you understand this blindspot now? If you need more clarifications, tell us.")),
                          'status-options-template', insertBeforeID=insertBeforeID).get()
     if status == 'help':
@@ -60,8 +61,8 @@ async def offer_faqs(faqlist, insertBeforeID=None):
     'let student select FAQs to view or create a new FAQ'
     chats = (("ChatMessageTemplate", "Would any of the following questions help you? Select the one(s) you wish to view."),)
     faqs = await chat.MultiSelection(chats, faqlist, "faq-list-template", "faq-choice-template", insertBeforeID=insertBeforeID).get()
-    for inquiry in faqs:
-        await show_faq(inquiry, faqs[inquiry], insertBeforeID)
+    for i in faqs:
+        await show_faq(faqlist[i], insertBeforeID)
     hasQuestion = await chat.ChatQuery((("ChatMessageTemplate", "Is there anything else you're wondering about, where you'd like clarification or something you're unsure about this point?"),),
                         'yesno-template', insertBeforeID=insertBeforeID).get()
     if hasQuestion == 'yes':
@@ -70,16 +71,17 @@ async def offer_faqs(faqlist, insertBeforeID=None):
                        insertBeforeID=insertBeforeID)
 
 
-async def show_faq(inquiry, answer, insertBeforeID=None):
+async def show_faq(faq, insertBeforeID=None):
     'show full question and option to view answer'
-    helpful = await chat.ChatQuery(((inquiry, None), ("ChatMessageTemplate", "Would the answer to this question help you?")), 'yesno-template', insertBeforeID=insertBeforeID).get()
-    if helpful == 'yes' and answer:
-        await show_faq_answer(answer, insertBeforeID)
+    helpful = await chat.ChatQuery((("faq-q1", f'<b>{faq["title"]}</b><br>{faq["question"]}'),
+                     ("ChatMessageTemplate", "Would the answer to this question help you?")), 'yesno-template', insertBeforeID=insertBeforeID).get()
+    if helpful == 'yes' and 'answer' in faq:
+        await show_faq_answer(faq['answer'], insertBeforeID)
 
 
 async def show_faq_answer(answer, insertBeforeID=None):
     'show answer and ask status'
-    status = await chat.ChatQuery(((answer, None), ("ChatMessageTemplate", "How well do you feel you understand now? If you need more clarification, tell us.")),
+    status = await chat.ChatQuery((('faq-a1', answer), ("ChatMessageTemplate", "How well do you feel you understand now? If you need more clarification, tell us.")),
                             "status-options-template", insertBeforeID=insertBeforeID).get()
     if status == 'help':
         chat.post_messages((("ChatMessageTemplate", "We will try to provide more explanation for this."),), insertBeforeID=insertBeforeID)
