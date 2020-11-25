@@ -1,5 +1,10 @@
 { "main": [
   {
+    "kind": "intro",
+    "title": "Really Important Explanation",
+    "message": "Here I am explaining an incredibly important and interesting idea."
+  },
+  {
     "kind": "orct",
     "title": "Efficiency Concerns: When to Include an ORCT?",
     "question": "What is the airspeed of a fully laden swallow?",

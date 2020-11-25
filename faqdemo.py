@@ -17,6 +17,7 @@ async def main(threadURL='faqdemo.json', insertBeforeID=None):
         faqs = []
     else:
         faqs = chat.filter_by_kind(mainThread, 'faq')
+    await show_explanations(chat.filter_by_kind(mainThread, 'intro'), insertBeforeID)
     s = await pose_orct(chat.filter_by_kind(mainThread, 'orct')[0], insertBeforeID)
     if s != 'same':
         if errmods:
@@ -26,6 +27,14 @@ async def main(threadURL='faqdemo.json', insertBeforeID=None):
         await solicit_faq(insertBeforeID)
     await chat.continue_button((("ChatMessageTemplate", "Now you can move to the next lesson"),),
                        insertBeforeID=insertBeforeID)
+
+async def show_explanations(explanations, insertBeforeID=None):
+    'display explanation message(s) one at a time with Continue button'
+    for e in explanations:
+        chat.post_messages((("ChatBreakpointTemplate", e['title']),),
+                           chatSelector='span', insertBeforeID=insertBeforeID)
+        await chat.continue_button((("ChatMessageTemplate", e['message']),),
+                                   insertBeforeID=insertBeforeID)
 
 
 async def pose_orct(orct, insertBeforeID=None):
