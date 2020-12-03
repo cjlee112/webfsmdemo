@@ -69,7 +69,7 @@ async def show_em(em, insertBeforeID=None, messageStamp=''):
     'show error model and get student status'
     return await get_status((('faq-a1', f'<b>RE: {em["title"]}</b><br>{em["message"]} {messageStamp}'),
                          ("ChatMessageTemplate", f"We hope this explanation helped you.  How well do you feel you understand this blindspot now? If you need more clarifications, tell us. {messageStamp}")),
-                            insertBeforeID)
+                            insertBeforeID, messageStamp)
 
 async def get_status(chats, insertBeforeID=None, messageStamp=''):
     status = await chat.ChatQuery(chats, 'status-options-template', insertBeforeID=insertBeforeID).get()
