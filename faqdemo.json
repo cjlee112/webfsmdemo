@@ -40,6 +40,11 @@
 ],
 "updates": [
   {
+    "kind": "errormodel",
+    "title": "I didn't realize that the answer to this question would change my life.",
+    "message": "Here is the amazing true story that will change your life forever!"
+  },
+  {
     "kind": "faq",
     "title": "Please, Professor, can you explain exactly what I am confused about?",
     "question": "I am a student who is very confused, and am hoping that you can make everything clear to me.",
